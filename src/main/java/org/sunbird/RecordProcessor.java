@@ -34,10 +34,10 @@ public class RecordProcessor extends StatusTracker {
 
     private static String docType = "_doc";
     private static String directory = "certificates/";
-    private static int es_limit = 20;
+    private static int es_limit = 10000;
     private static ObjectMapper mapper = new ObjectMapper();
     public static final int initialCapacity = 50000;
-    public static final String scrollTime = "5m";
+    public static final String scrollTime = "1h";
 
     static {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -90,6 +90,7 @@ public class RecordProcessor extends StatusTracker {
         int[] skipCount = {0};
         // count of certificates not found in cassandra
         int[] notFound = {0};
+        int[] failed = {0};
         int size = certificatesFromDb.size();
         certificatesFromDb.forEach(cert -> {
             String id = (String) cert.get("_id");
@@ -118,6 +119,7 @@ public class RecordProcessor extends StatusTracker {
                             logEsSuccessRecord(id, true);
                         }
                     } else {
+                        failed[0]++;
                         logFailedRecord(id);
                     }
                 } else {
@@ -126,6 +128,7 @@ public class RecordProcessor extends StatusTracker {
                 }
 
             } catch (Exception e) {
+                failed[0]++;
                 logExceptionOnProcessingRecord(id, e.getMessage());
 
             } finally {
@@ -135,13 +138,14 @@ public class RecordProcessor extends StatusTracker {
         logger.info(
                 "Total records: "
                         + size
-                        + " Total Records corrected: "
+                        + " ,Total Records corrected: "
                         + (size - notFound[0] - skipCount[0])
                         + " Certificates Successfully updated in cassandra: "
                         + count[0]
                         + " Successfully synced in ES :"
                         + (count[1]));
         logger.info("Certificates Skipped : {} , certificates not found in cassandra : {}", skipCount[0], notFound[0]);
+        logger.info("Certificates failed count : {} ", failed);
         cassandraOperation.closeConnection();
         CloudStorage.closeConnection();
         ElasticSearchUtil.cleanESClient();
