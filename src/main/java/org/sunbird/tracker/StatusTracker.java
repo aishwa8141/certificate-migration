@@ -25,23 +25,23 @@ public class StatusTracker {
 
 
     public static void logFailedRecord(String id) {
-        logger.info(String.format("Record Failed with certId:%s", id));
+        logger.info(String.format("Record updated Failed for the certId:%s", id));
         writeUpdateFailedRecordToFile(id);
     }
 
 
     public static void logSuccessRecord(String certId, boolean isUpdated) {
-        logger.info(String.format("Record updated success with certId:%s isUpdated:%s", certId, isUpdated));
+        logger.info(String.format("Record updated successfully in cassandra with certId:%s isUpdated:%s", certId, isUpdated));
         writeDbSuccessRecordToFile(certId, isUpdated);
     }
 
-    public static void logEsFailedRecord(String id) {
+    public static void logEsSyncFailedRecord(String id) {
         logger.info(String.format("Document updation Failed for certId:%s", id));
         writeEsFailedRecordToFile(id);
     }
 
 
-    public static void logEsSuccessRecord(String certId, boolean isUpdated) {
+    public static void logEsSyncSuccessRecord(String certId, boolean isUpdated) {
         logger.info(String.format("Document updated success for certId:%s isUpdated:%s", certId, isUpdated));
         writeEsSuccessRecordToFile(certId, isUpdated);
     }
@@ -152,7 +152,7 @@ public class StatusTracker {
     }
 
 
-    public static void closeFwUpdateEsfailedConnection() {
+    public static void closeFwUpdateEsFailedConnection() {
         try {
             if (fwUpdateEsSuccess != null) {
                 fwUpdateEsSuccess.close();

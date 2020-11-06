@@ -3,7 +3,6 @@ package org.sunbird.util;
 /**
  * this class has constants which is required to set as env.
  *
- * @author anmolgupta
  */
 public class EnvConstants {
     public static final String SUNBIRD_CASSANDRA_HOST = "sunbird_cassandra_host";

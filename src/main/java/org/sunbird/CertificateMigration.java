@@ -29,8 +29,8 @@ public class CertificateMigration {
             RecordProcessor recordProcessor =
                     RecordProcessor.getInstance(connectionFactory, requestParams);
             String date1 = args.length >= 2 && StringUtils.isNotBlank(args[0]) ? args[0] : "2020-08-01";
-            String date2 = args.length >= 2 && StringUtils.isNotBlank(args[1]) ? args[1] : "2020-10-01";
-            System.out.println("date" + date1 + date2);
+            String date2 = args.length >= 2 && StringUtils.isNotBlank(args[1]) ? args[1] : "2020-11-06";
+            logger.info("date" + date1 + date2);
             recordProcessor.processCertificates(date1, date2);
         } catch (Exception ex) {
             ElasticSearchUtil.cleanESClient();
@@ -51,7 +51,7 @@ public class CertificateMigration {
                 System.getenv(JsonKeys.SUNBIRD_CASSANDRA_KEYSPACENAME));
         requestParams.setCassandraPort(System.getenv(JsonKeys.SUNBIRD_CASSANDRA_PORT));
         requestParams.setEsConnection(System.getenv(JsonKeys.es_conn_info));
-        requestParams.setCertificateBasePath(JsonKeys.DOMAIN_URL + "/certs");
+        requestParams.setCertificateBasePath(System.getenv(JsonKeys.DOMAIN_URL) + "/certs");
         logger.info("env variable got prepareRequestParams {}", requestParams.toString());
         return requestParams;
     }

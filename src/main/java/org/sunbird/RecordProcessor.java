@@ -5,6 +5,7 @@ import com.datastax.driver.core.ResultSet;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -93,30 +94,32 @@ public class RecordProcessor extends StatusTracker {
         int[] failed = {0};
         int size = certificatesFromDb.size();
         certificatesFromDb.forEach(cert -> {
-            String id = (String) cert.get("_id");
+            String id = ((Map<String, String>) cert.get("_source")).get("identifier");
             try {
                 startTracingRecord(id);
                 Certificate certificate = getCertificateFromDb(id);
                 if (certificate == null) {
                     notFound[0]++;
                 } else if (StringUtils.isBlank(certificate.getJsonUrl()) && MapUtils.isNotEmpty(certificate.getData()) && StringUtils.isNotEmpty((String) certificate.getData().get(JsonKeys.PRINT_URI))) {
-                    String jsonUrl = certBasePath + uploadJson(id, UrlManager.getTagId((String) certificate.getData().get(JsonKeys.id), certBasePath, id).concat("/"), certificate.getData());
+                    String jsonUrl = certBasePath + uploadJson(id, UrlManager.getTagId((String) certificate.getData().get(JsonKeys.id)).concat("/"), certificate.getData());
                     Map<String, Object> data = certificate.getData();
                     data.remove(JsonKeys.PRINT_URI);
-                    boolean isDataUpdated = cassandraOperation.updateRecord(CassandraHelper.getUpdateQuery(id, jsonUrl, data), id);
+                    long updatedAt = System.currentTimeMillis();
+                    boolean isDataUpdated = cassandraOperation.updateRecord(CassandraHelper.getUpdateQuery(id, jsonUrl, data, new Timestamp(updatedAt)), id);
                     if (isDataUpdated) {
                         logSuccessRecord(id, isDataUpdated);
                         count[0] += 1;
                         Map<String, Object> esCert = new HashMap<String, Object>() {{
                             put(JsonKeys.DATA, data);
                             put(JsonKeys.JSON_URL, jsonUrl);
+                            put(JsonKeys.UPDATED_AT, updatedAt);
                         }};
-                        UpdateResponse updateResponse = ElasticSearchUtil.updateDocument(JsonKeys.CERT_ALIAS, docType, esCert, id);
+                        UpdateResponse updateResponse = ElasticSearchUtil.updateDocument(JsonKeys.CERT_ALIAS, docType, esCert, (String) cert.get("_id"));
                         if (updateResponse == null) {
-                            logEsFailedRecord(id);
+                            logEsSyncFailedRecord(id);
                         } else {
                             count[1] += 1;
-                            logEsSuccessRecord(id, true);
+                            logEsSyncSuccessRecord(id, true);
                         }
                     } else {
                         failed[0]++;
@@ -140,9 +143,9 @@ public class RecordProcessor extends StatusTracker {
                         + size
                         + " ,Total Records corrected: "
                         + (size - notFound[0] - skipCount[0])
-                        + " Certificates Successfully updated in cassandra: "
+                        + " ,Certificates Successfully updated in cassandra: "
                         + count[0]
-                        + " Successfully synced in ES :"
+                        + " ,Successfully synced in ES :"
                         + (count[1]));
         logger.info("Certificates Skipped : {} , certificates not found in cassandra : {}", skipCount[0], notFound[0]);
         logger.info("Certificates failed count : {} ", failed);
@@ -151,7 +154,7 @@ public class RecordProcessor extends StatusTracker {
         ElasticSearchUtil.cleanESClient();
         closeFwUpdateCassandraSuccessConnection();
         closeFwUpdateCassandraFailedConnection();
-        closeFwUpdateEsfailedConnection();
+        closeFwUpdateEsFailedConnection();
         closeFwUpdateEsSuccessConnection();
     }
 

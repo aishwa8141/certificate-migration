@@ -25,6 +25,8 @@ public class JsonKeys {
     public static final String CERT_ALIAS ="certsv1";
     public static final String JSON_URL ="jsonUrl";
     public static final String DATA ="data";
+    public static final String UPDATED_AT ="updatedAt";
+
 
 
 

@@ -65,7 +65,7 @@ public class UrlManager {
      * @return
      * @throws MalformedURLException
      */
-    public static String getTagId(String url, String basePath, String id) throws MalformedURLException {
+    public static String getTagId(String url) throws MalformedURLException {
         String uri = StringUtils.substringAfter(new URL(url).getPath(), "/");
         String[] path = uri.split("/");
         return path[1];
