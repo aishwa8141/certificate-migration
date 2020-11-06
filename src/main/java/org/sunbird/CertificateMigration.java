@@ -29,7 +29,7 @@ public class CertificateMigration {
             RecordProcessor recordProcessor =
                     RecordProcessor.getInstance(connectionFactory, requestParams);
             String date1 = args.length >= 2 && StringUtils.isNotBlank(args[0]) ? args[0] : "2020-08-01";
-            String date2 = args.length >= 2 && StringUtils.isNotBlank(args[1]) ? args[1] : "2020-11-06";
+            String date2 = args.length >= 2 && StringUtils.isNotBlank(args[1]) ? args[1] : "2020-10-01";
             logger.info("date" + date1 + date2);
             recordProcessor.processCertificates(date1, date2);
         } catch (Exception ex) {

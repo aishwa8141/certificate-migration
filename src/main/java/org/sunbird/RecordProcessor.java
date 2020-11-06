@@ -38,7 +38,7 @@ public class RecordProcessor extends StatusTracker {
     private static int es_limit = 10000;
     private static ObjectMapper mapper = new ObjectMapper();
     public static final int initialCapacity = 50000;
-    public static final String scrollTime = "1h";
+    public static final String scrollTime = "2h";
 
     static {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
