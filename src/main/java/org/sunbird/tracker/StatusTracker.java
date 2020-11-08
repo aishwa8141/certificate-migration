@@ -57,13 +57,12 @@ public class StatusTracker {
 
     public static void writeDbSuccessRecordToFile(String userId, boolean isUpdated) {
         try {
-            if (fwUpdateCassandraSuccess != null) {
-                fwUpdateCassandraSuccess.write(String.format("%s:%b", userId, isUpdated));
-                fwUpdateCassandraSuccess.write("\n");
-                fwUpdateCassandraSuccess.flush();
-            } else {
+            if (fwUpdateCassandraSuccess == null) {
                 fwUpdateCassandraSuccess = new FileWriter(EnvConstants.UDATE_SUCCESS_RECORDS);
             }
+            fwUpdateCassandraSuccess.write(String.format("%s:%b", userId, isUpdated));
+            fwUpdateCassandraSuccess.write("\n");
+            fwUpdateCassandraSuccess.flush();
         } catch (Exception e) {
             logger.error(String.format("%s:%s:error occurred while writing preProcessed records to file with message %s", StatusTracker.class.getSimpleName(), "writeCassandraSuccessRecordToFile", e.getMessage()));
             System.exit(0);
@@ -84,13 +83,12 @@ public class StatusTracker {
 
     public static void writeUpdateFailedRecordToFile(String userId) {
         try {
-            if (fwUpdateCassandraFailed != null) {
-                fwUpdateCassandraFailed.write(String.format("%s", userId));
-                fwUpdateCassandraFailed.write("\n");
-                fwUpdateCassandraFailed.flush();
-            } else {
+            if (fwUpdateCassandraFailed == null) {
                 fwUpdateCassandraFailed = new FileWriter(EnvConstants.UDATE_FAILED_RECORDS);
             }
+            fwUpdateCassandraFailed.write(String.format("%s", userId));
+            fwUpdateCassandraFailed.write("\n");
+            fwUpdateCassandraFailed.flush();
         } catch (Exception e) {
             logger.error(String.format("%s:%s:error occurred while writing cassandra success records to file with message %s", StatusTracker.class.getSimpleName(), "writeCassandraFailedRecordToFile", e.getMessage()));
             System.exit(0);
@@ -111,13 +109,13 @@ public class StatusTracker {
 
     public static void writeEsSuccessRecordToFile(String userId, boolean isUpdated) {
         try {
-            if (fwUpdateEsSuccess != null) {
-                fwUpdateEsSuccess.write(String.format("%s:%b", userId, isUpdated));
-                fwUpdateEsSuccess.write("\n");
-                fwUpdateEsSuccess.flush();
-            } else {
+            if (fwUpdateEsSuccess == null) {
                 fwUpdateEsSuccess = new FileWriter(EnvConstants.UDATE_ES_SUCCESS_RECORDS);
+
             }
+            fwUpdateEsSuccess.write(String.format("%s:%b", userId, isUpdated));
+            fwUpdateEsSuccess.write("\n");
+            fwUpdateEsSuccess.flush();
         } catch (Exception e) {
             logger.error(String.format("%s:%s:error occurred while writing es success records to file with message %s", StatusTracker.class.getSimpleName(), "writeESSuccessRecordToFile", e.getMessage()));
             System.exit(0);
@@ -138,13 +136,12 @@ public class StatusTracker {
 
     public static void writeEsFailedRecordToFile(String userId) {
         try {
-            if (fwUpdateEsFailed != null) {
-                fwUpdateEsFailed.write(String.format("%s", userId));
-                fwUpdateEsFailed.write("\n");
-                fwUpdateEsFailed.flush();
-            } else {
+            if (fwUpdateEsFailed == null) {
                 fwUpdateEsFailed = new FileWriter(EnvConstants.UDATE_ES_FAILED_RECORDS);
             }
+            fwUpdateEsFailed.write(String.format("%s", userId));
+            fwUpdateEsFailed.write("\n");
+            fwUpdateEsFailed.flush();
         } catch (Exception e) {
             logger.error(String.format("%s:%s:error occurred while writing esFailed records to file with message %s", StatusTracker.class.getSimpleName(), "writeESFailedRecordToFile", e.getMessage()));
             System.exit(0);

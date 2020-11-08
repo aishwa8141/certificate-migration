@@ -164,6 +164,7 @@ public class RecordProcessor extends StatusTracker {
                 "[{\"bool\":{\"must_not\":{\"exists\":{\"field\":\"data\"}}}},{\"bool\":{\"must_not\":{\"exists\":{\"field\":" +
                 "\"jsonUrl\"}}}},{\"range\":{\"createdAt\":{\"gte\":\"%s\",\"lte\":\"%s\"}}}]}}}", es_limit, date1, date2);
         String searchUrl = getEsSearchUri() + JsonKeys.CERT_ALIAS + "/_search/?scroll=" + scrollTime;
+        logger.info("search url formed {}", searchUrl);
         List<Map<String, Object>> certificates = new ArrayList<>(initialCapacity);
         HttpResponse<JsonNode> response = post(searchUrl, req);
         try {
@@ -200,6 +201,7 @@ public class RecordProcessor extends StatusTracker {
     private ESResponseMapper callScrollApi(String scrollId) {
         String req = String.format("{\"scroll\":\"1m\",\"scroll_id\":\"%s\"}", scrollId);
         String searchUrl = getEsSearchUri() + "_search/scroll";
+        logger.info("scroll url formed {}", searchUrl);
         HttpResponse<JsonNode> response = post(searchUrl, req);
         ESResponseMapper mappedResponse = null;
         if (response != null && response.getStatus() == HttpStatus.SC_OK) {

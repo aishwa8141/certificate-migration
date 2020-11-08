@@ -22,7 +22,7 @@ public class JsonKeys {
     public static final String KEYSPACE = "sunbird";
     public static final String TABLE_NAME = "cert_registry";
     public static final String id = "id";
-    public static final String CERT_ALIAS ="certsv1";
+    public static final String CERT_ALIAS ="certs";
     public static final String JSON_URL ="jsonUrl";
     public static final String DATA ="data";
     public static final String UPDATED_AT ="updatedAt";
