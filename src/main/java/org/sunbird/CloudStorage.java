@@ -14,18 +14,20 @@ import java.io.File;
 
 public class CloudStorage {
 
-    private Logger logger = LoggerFactory.getLogger(CloudStorage.class);
+    private static Logger logger = LoggerFactory.getLogger(CloudStorage.class);
 
     private static BaseStorageService storageService = null;
 
-    private static String cloudStoreType = System.getenv("cert_cloud_storage_type");
+    private static String cloudStoreType = System.getenv("CLOUD_STORAGE_TYPE");
 
     private static String containerName = System.getenv("CONTAINER_NAME");
 
     static {
+        logger.info("CLOUD_STORAGE_TYPE {}", cloudStoreType);
+        logger.info("container name {}", containerName);
         if (StringUtils.equalsIgnoreCase(cloudStoreType, "azure")) {
-            String storageKey = System.getenv("cert_azure_storage_key");
-            String storageSecret = System.getenv("cert_azure_storage_secret");
+            String storageKey = System.getenv("AZURE_STORAGE_KEY");
+            String storageSecret = System.getenv("AZURE_STORAGE_SECRET");
             storageService = StorageServiceFactory.getStorageService(new StorageConfig(cloudStoreType, storageKey, storageSecret));
         } else if (StringUtils.equalsIgnoreCase(cloudStoreType, "aws")) {
             String storageKey = System.getenv("cert_aws_storage_key");
@@ -38,9 +40,6 @@ public class CloudStorage {
         }
     }
 
-    public static String getContainerName() {
-        return System.getenv("cert_azure_storage_key");
-    }
 
     public static String uploadFile(String path, File file) {
         String objectKey = path + file.getName();
