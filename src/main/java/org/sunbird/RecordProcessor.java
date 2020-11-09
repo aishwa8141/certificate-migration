@@ -148,7 +148,7 @@ public class RecordProcessor extends StatusTracker {
                         + " ,Successfully synced in ES :"
                         + (count[1]));
         logger.info("Certificates Skipped : {} , certificates not found in cassandra : {}", skipCount[0], notFound[0]);
-        logger.info("Certificates failed count : {} ", failed);
+        logger.info("Certificates failed count : {} ", failed[0]);
         cassandraOperation.closeConnection();
         CloudStorage.closeConnection();
         ElasticSearchUtil.cleanESClient();
